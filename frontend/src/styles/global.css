@@ -1,0 +1,14 @@
+:root { --brand-primary: #409eff; --brand-success: #67c23a; --brand-warning: #e6a23c; --brand-danger: #f56c6c; --bg-page: #f5f7fa; --bg-card: #ffffff; }
+* { box-sizing: border-box; }
+html, body, #app { height: 100%; margin: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", Arial, "Microsoft YaHei", sans-serif; color: #303133; background: var(--bg-page); }
+.page-container { padding: 16px; }
+.page-card { background: var(--bg-card); border-radius: 8px; padding: 20px; }
+.page-toolbar { display: flex; justify-content: space-between; margin-bottom: 16px; flex-wrap: wrap; gap: 8px; }
+.stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+.stat-item { background: #fff; border-radius: 8px; padding: 20px; box-shadow: 0 1px 4px rgba(0,0,0,0.04); }
+.stat-item .label { color: #909399; font-size: 13px; }
+.stat-item .value { font-size: 28px; font-weight: 600; margin-top: 8px; color: #303133; }
+.text-muted { color: #909399; }
+.mt-16 { margin-top: 16px; }
+.mb-16 { margin-bottom: 16px; }
