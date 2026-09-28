@@ -1,0 +1,22 @@
+{
+  "name": "lottery-admin",
+  "version": "0.1.0",
+  "private": true,
+  "description": "抽奖互动后台管理系统（1:1 还原原型，待采集脚本替换真实数据）",
+  "workspaces": [
+    "backend",
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently -k -n BE,FE -c blue,green \"npm run dev -w backend\" \"npm run dev -w frontend\"",
+    "dev:be": "npm run dev -w backend",
+    "dev:fe": "npm run dev -w frontend",
+    "build": "npm run build -w backend && npm run build -w frontend",
+    "test": "npm run test -w backend",
+    "db:seed": "npm run db:seed -w backend",
+    "scrape": "node scripts/scrape.mjs"
+  },
+  "devDependencies": {
+    "concurrently": "^9.0.0"
+  }
+}
