@@ -1,0 +1,106 @@
+// Prisma schema — 抽奖互动后台数据模型
+generator client {
+  provider = "prisma-client-js"
+}
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+model User {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String
+  nickname  String   @default("")
+  role      String   @default("admin")
+  status    Int      @default(1)
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+  activities    Activity[]
+  participations Participation[]
+  @@map("users")
+}
+model Activity {
+  id          Int       @id @default(autoincrement())
+  title       String
+  description String    @default("")
+  coverUrl    String    @default("") @map("cover_url")
+  startTime   DateTime  @map("start_time")
+  endTime     DateTime  @map("end_time")
+  status      String    @default("draft")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @updatedAt @map("updated_at")
+  creatorId   Int       @map("creator_id")
+  creator       User            @relation(fields: [creatorId], references: [id])
+  interactions  Interaction[]
+  participations Participation[]
+  prizeRecords  PrizeRecord[]
+  @@map("activities")
+}
+model Interaction {
+  id         Int      @id @default(autoincrement())
+  activityId Int      @map("activity_id")
+  type       String
+  name       String
+  config     String   @default("{}")
+  dailyLimit Int      @default(1) @map("daily_limit")
+  totalLimit Int      @default(0) @map("total_limit")
+  status     Int      @default(1)
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+  activity      Activity        @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  prizes        Prize[]
+  participations Participation[]
+  @@map("interactions")
+}
+model Prize {
+  id            Int      @id @default(autoincrement())
+  interactionId Int      @map("interaction_id")
+  name          String
+  image         String   @default("")
+  type          String
+  value         Float    @default(0)
+  stock         Int      @default(0)
+  probability   Float    @default(0)
+  sortOrder     Int      @default(0) @map("sort_order")
+  status        Int      @default(1)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  interaction   Interaction     @relation(fields: [interactionId], references: [id], onDelete: Cascade)
+  prizeRecords  PrizeRecord[]
+  @@map("prizes")
+}
+model Participation {
+  id         Int      @id @default(autoincrement())
+  activityId Int      @map("activity_id")
+  interactionId Int   @map("interaction_id")
+  userId     Int      @map("user_id")
+  externalId String   @default("") @map("external_id")
+  source     String   @default("web")
+  createdAt  DateTime @default(now()) @map("created_at")
+  activity     Activity      @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  interaction  Interaction   @relation(fields: [interactionId], references: [id], onDelete: Cascade)
+  user         User?         @relation(fields: [userId], references: [id])
+  prizeRecords PrizeRecord[]
+  @@index([activityId])
+  @@index([interactionId])
+  @@index([externalId])
+  @@map("participations")
+}
+model PrizeRecord {
+  id            Int      @id @default(autoincrement())
+  activityId    Int      @map("activity_id")
+  participationId Int    @map("participation_id")
+  prizeId       Int      @map("prize_id")
+  status        String   @default("pending")
+  recipientName String   @default("") @map("recipient_name")
+  recipientPhone String  @default("") @map("recipient_phone")
+  recipientAddr String   @default("") @map("recipient_addr")
+  remark        String   @default("")
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+  activity    Activity      @relation(fields: [activityId], references: [id], onDelete: Cascade)
+  participation Participation @relation(fields: [participationId], references: [id], onDelete: Cascade)
+  prize       Prize         @relation(fields: [prizeId], references: [id])
+  @@index([activityId])
+  @@map("prize_records")
+}
